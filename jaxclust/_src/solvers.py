@@ -3,26 +3,16 @@ import jax
 from typing import Tuple, Callable, Dict, Any, Union
 from jaxclust._src.prims import prims, prims_cc
 from jaxclust._src.forests import build_forest, build_mnn_forest
-from jaxclust._src.perturbations import Normal, make_pert_solver, make_pert_csolver
 
 # Types of different solvers (constrained vs unconstrained), (perturbed vs classic)
-Solver = Callable[
-    Tuple[jax.Array, int],
-    Tuple[jax.Array, jax.Array]
-]
-CSolver = Callable[
-    Tuple[jax.Array, int, jax.Array],
-    Tuple[jax.Array, jax.Array]
-]
-
-PertSolver = Callable[
-    Tuple[jax.Array, int, jax.random.PRNGKey],
-    Tuple[jax.Array, jax.Array]
-]
-PertCSolver = Callable[
-    Tuple[jax.Array, int, jax.Array, jax.random.PRNGKey],
-    Tuple[jax.Array, jax.Array]
-]
+# Solver = Callable[
+#     Tuple[jax.Array, int],
+#     Tuple[jax.Array, jax.Array]
+# ]
+# CSolver = Callable[
+#     Tuple[jax.Array, int, jax.Array],
+#     Tuple[jax.Array, jax.Array]
+# ]
 
 
 def kruskals(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
@@ -219,53 +209,24 @@ def ckruskals_prims_post(D : jax.Array,
 
 
 
-def get_lp_solver(preprocess : bool=False) -> Callable:
-    '''
-    Returns a function that solves the maximum similarity
-    k-spanning forest LP.
-    Will assume input matrix is a similarity matrix.
-    '''
-    if preprocess:
-        return lambda S, ncc : kruskals_prims_pre(-S, ncc)
-    else:
-        return lambda S, ncc : kruskals(-S, ncc)
+def get_flp_solver(constrained : bool=False,
+                   use_prims : bool=False
+                  ) -> Callable:
 
-def get_clp_solver(postprocess : bool=False) -> Callable:
-    '''
-    Returns a function that heurstically solves the
-    maximum similarity k-spanning forest constrained LP.
-    Will assume input matrix is a similarity matrix.
-    '''
-
-    if postprocess:
-        return lambda S, ncc, C : ckruskals_prims_post(-S, ncc, C)
-    else:
-        return lambda S, ncc, C : ckruskals(-S, ncc, C)
+    """
+    Returns a solver for the tree linear program (flp).
+    """
 
 
-def get_solver(constrained : bool=False, prims : bool=False) -> Union[Solver, CSolver]:
-    '''
-    If constrained is False, returns a function that solves the minimum weight
-    spanning forest LP. If constrained is True, returns a heurestic method for
-    solving the constrained LP. If prims is True, then uses prims pre/post-processing
-    for the unconstrained / constrained LP respectively.
-    '''
-    if constrained:
-        return get_clp_solver(postprocess=prims)
-    else:
-        return get_lp_solver(preprocess=prims)
-
-
-def get_perturbed_solver(constrained : bool=False,
-                         prims : bool=False,
-                         num_samples : int=100,
-                         sigma : float=0.1,
-                         noise=Normal()
-                        ) -> Union[PertSolver, PertCSolver]:
-
-    solver = get_solver(constrained=constrained, prims=prims)
-    make_fn = make_pert_csolver if constrained else make_pert_solver
-    return make_fn(solver, num_samples=num_samples, sigma=sigma, noise=noise)
-
-
+    if not constrained:
+        if prims:
+            fn = lambda S, ncc : kruskals_prims_pre(-S, ncc)
+        else:
+            fn = lambda S, ncc : kruskals(-S, ncc)
+    elif constrained:
+        if prims:
+            fn = lambda S, ncc, C : ckruskals_prims_post(-S, ncc, C)
+        else:
+            fn = lambda S, ncc, C : ckruskals(-S, ncc, C)
+    return fn
 

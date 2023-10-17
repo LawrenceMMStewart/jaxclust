@@ -29,8 +29,8 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         with:
           source-directory: 'docs/_build'
-          destination-github-username: 'jaxclust'
-          destination-repository-name: 'jaxclust.github.io'
+          destination-github-username: 'LawrenceMMStewart'
+          destination-repository-name: 'jaxclust'
           user-email: stewart.ai@pm.me
           target-branch: main
           target-directory: dev

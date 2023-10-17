@@ -1,0 +1,36 @@
+name: docs
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    name: "Build and deploy documentation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v3"
+      - name: Set up Python 3.11
+        uses: "actions/setup-python@v4"
+        with:
+            python-version: 3.11
+            cache: 'pip'
+      - run: pip install --upgrade pip && pip install -r docs/requirements.txt && pip install -r requirements.txt
+      - name: Download Pandoc (pip install doesnt work with actions for pandoc)
+        run: wget -c https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb
+      - name: Install Pandoc
+        run: sudo dpkg -i pandoc-2.7.3-1-amd64.deb
+      - name: Build documentation
+        run: cd docs && sphinx-build . _build
+      - name: Debug 
+        run: ls docs && ls docs/_build
+      - uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        with:
+          source-directory: 'docs/_build'
+          destination-github-username: 'jaxclust'
+          destination-repository-name: 'jaxclust.github.io'
+          user-email: stewart.ai@pm.me
+          target-branch: main
+          target-directory: dev

@@ -17,7 +17,7 @@ class NoNoisePerturbationsTest(test_util.JAXTestCase):
     def setUp(self):
         super().setUp()
         self.rng = jax.random.PRNGKey(0)
-        self.X = jax.random.normal(self.rng, (64, 3))
+        self.X = jax.random.normal(self.rng, (32, 3))
         self.D = pairwise_square_distance(self.X)
         self.S = - self.D
 
@@ -80,5 +80,88 @@ class NoNoisePerturbationsTest(test_util.JAXTestCase):
 
         self.assertArraysEqual(A, pert_A)
         self.assertArraysEqual(M, pert_M)
+
+
+
+
+
+class GradientofMaxisArgmax_test(test_util.JAXTestCase):
+    def setUp(self):
+        super().setUp()
+        self.rng = jax.random.PRNGKey(0)
+        self.X = jax.random.normal(self.rng, (32, 3))
+        self.D = pairwise_square_distance(self.X)
+        self.S = - self.D
+
+    def test_gradF_kruskals(self):
+
+        constrained = False
+        use_prims = False
+        ncc = 10
+        fn = jax.jit(get_flp_solver(constrained=constrained, use_prims=use_prims))
+        pert_fn = make_pert_flp_solver(fn, constrained, num_samples=100, sigma=0.1)
+
+        pert_F = lambda *args : pert_fn(*args)[1] # Max LP (so we can call grad) 
+
+        key = jax.random.PRNGKey(1)
+        A, F, M = pert_fn(self.S, 10, key)
+        G = jax.grad(pert_F)(self.S, 10, key)
+
+        self.assertArraysEqual(A, G)
+
+
+    def test_gradF_kruskals_prims(self):
+
+        constrained = False
+        use_prims = True
+        ncc = 10
+        fn = jax.jit(get_flp_solver(constrained=constrained, use_prims=use_prims))
+        pert_fn = make_pert_flp_solver(fn, constrained, num_samples=100, sigma=0.1)
+
+        pert_F = lambda *args : pert_fn(*args)[1] # Max LP (so we can call grad) 
+
+        key = jax.random.PRNGKey(1)
+        A, F, M = pert_fn(self.S, 10, key)
+        G = jax.grad(pert_F)(self.S, 10, key)
+
+        self.assertArraysEqual(A, G)
+
+
+    def test_gradF_ckruskals(self):
+
+        constrained = True
+        use_prims = False
+        ncc = 10
+        C = jnp.zeros_like(self.S)
+        fn = jax.jit(get_flp_solver(constrained=constrained, use_prims=use_prims))
+        pert_fn = make_pert_flp_solver(fn, constrained, num_samples=100, sigma=0.1)
+
+        pert_F = lambda *args : pert_fn(*args)[1] # Max LP (so we can call grad) 
+
+        key = jax.random.PRNGKey(1)
+        A, F, M = pert_fn(self.S, 10, C, key)
+        G = jax.grad(pert_F)(self.S, 10, C, key)
+
+        self.assertArraysEqual(A, G)
+
+
+
+    def test_gradF_ckruskals_prims(self):
+
+        constrained = True
+        use_prims = True
+        ncc = 10
+        C = jnp.zeros_like(self.S)
+        fn = jax.jit(get_flp_solver(constrained=constrained, use_prims=use_prims))
+        pert_fn = make_pert_flp_solver(fn, constrained, num_samples=100, sigma=0.1)
+
+        pert_F = lambda *args : pert_fn(*args)[1] # Max LP (so we can call grad) 
+
+        key = jax.random.PRNGKey(1)
+        A, F, M = pert_fn(self.S, 10, C, key)
+        G = jax.grad(pert_F)(self.S, 10, C, key)
+
+        self.assertArraysEqual(A, G)
+
 
 

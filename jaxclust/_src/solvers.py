@@ -1,37 +1,25 @@
-import jax.numpy as jnp
 import jax
+import jax.numpy as jnp
 from typing import Tuple, Callable, Dict, Any, Union
 from jaxclust._src.prims import prims, prims_cc
 from jaxclust._src.forests import build_forest, build_mnn_forest
 
-# Types of different solvers (constrained vs unconstrained), (perturbed vs classic)
-# Solver = Callable[
-#     Tuple[jax.Array, int],
-#     Tuple[jax.Array, jax.Array]
-# ]
-# CSolver = Callable[
-#     Tuple[jax.Array, int, jax.Array],
-#     Tuple[jax.Array, jax.Array]
-# ]
-
-
 def kruskals(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
-    '''
-    Performs kruskals algorithm on the fully connected graph with
-    weights given by D, constructing the minimum weight spanning
-    ncc-forest.
+    """Calculates the adjacency matrix and cluster connectivity matrix
+    of the minimum weight ncc-spanning forest using Kruskal's algorithm.
 
-    Inputs:
-        D : jax.Array, distance matrix.
-        ncc : int, number of connected components.
-    Outputs:
-        A : jax.Array, adjacency matrix of forest.
-        M : jax.Array, cluster equivalence matrix of forest.
+    Args:
+        D (jax.Array): distance matrix.
+        ncc (int): number of connected components. 
 
-    A_ij = 1 if the edge (i, j) is in the forest.
-    M_ij = 1 if (i, j) are in the same connected component of the forest.
-    '''
+    Returns:
+        Tuple[jax.Array, jax.Array]: A, M
 
+    :math:`A_{ij} = 1` if the edge (i, j) is in the forest.
+
+    :math:`M_{ij} = 1` if i and j are in the same connected component of the forest.
+
+    """
 
     n = D.shape[0]
     triu_ids = jnp.triu_indices_from(D, k=1)
@@ -53,24 +41,22 @@ def kruskals(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
 
 
 def kruskals_prims_pre(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
-    '''
-    Performs kruskals algorithm on the fully connected graph with
-    weights given by D, constructing the minimum weight spanning
-    ncc-forest. First calculates the full-spanning tree using
-    prims algorithm, in order to extract the edges in order to
-    caculate the spanning-forest (with a second pass of kruskals).
+    """Calculates the adjacency matrix and cluster connectivity matrix
+    of the minimum weight ncc-spanning forest. Uses Prim's algorithm
+    to construct the full spanning tree, then applies Kruskal's algorithm
+    to the edges in the spanning tree in order to calculate the forest.
 
-    Inputs:
-        D : jax.Array, distance matrix.
-        ncc : int, number of connected components.
-    Outputs:
-        A : jax.Array, adjacency matrix of forest.
-        M : jax.Array, cluster equivalence matrix of forest.
+    Args:
+        D (jax.Array): distance matrix.
+        ncc (int): number of connected components. 
 
-    A_ij = 1 if the edge (i, j) is in the forest.
-    M_ij = 1 if (i, j) are in the same connected component of the forest.
-    '''
+    Returns:
+        Tuple[jax.Array, jax.Array]: A, M
 
+    :math:`A_{ij} = 1` if the edge (i, j) is in the forest.
+
+    :math:`M_{ij} = 1` if i and j are in the same connected component of the forest.
+    """
     n = D.shape[0]
     nsteps = n - ncc
     triu_ids = jnp.triu_indices_from(D, k=1)
@@ -92,31 +78,28 @@ def kruskals_prims_pre(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
 def ckruskals(D : jax.Array,
               ncc : int,
               C : jax.Array) ->  Tuple[jax.Array, jax.Array]:
+    """Calculates the adjacency matrix and cluster connectivity matrix
+    of the minimum weight ncc-spanning forest. Uses a biased heuristic
+    based on kruskals algorithm to create the forest.
 
-    '''
-    Performs kruskals algorithm on the fully connected graph with
-    weights given by D, respecting must-link and must-not-link
-    constraints given by the matrix C. Note this problem is no
-    longer a matroid structure like kruskals algorithm, and is
-    hence only a heuristic. The must-link edges are considered
-    first by the algorithm, and before any edge is added
-    there is a check to ensure no must-not-link constraint
-    is violated.
+    Args:
+        D (jax.Array): distance matrix.
+        ncc (int): number of connected components. 
+        C (jax.Array) : constraint matrix.
 
-    Inputs:
-        D : jax.Array, distance matrix.
-        ncc : int, number of connected components.
-        C : jax.Array, constraint matrix (see-below for more info).
-    Outputs:
-        A : jax.Array, adjacency matrix of forest.
-        M : jax.Array, cluster equivalence matrix of forest.
+    Returns:
+        Tuple[jax.Array, jax.Array]: A, M
 
-    A_ij = 1 if the edge (i, j) is in the forest.
-    M_ij = 1 if (i, j) are in the same connected component of the forest.
-    C_ij = 1 if (i, j) has a must-link constraint.
-    C_ij = -1 if (i, j) has a must-not-link constraint.
-    C_ij = 0 if (i, j) has no constraint.
-    '''
+    :math:`A_{ij} = 1` if the edge (i, j) is in the forest.
+
+    :math:`M_{ij} = 1` if i and j are in the same connected component of the forest.
+
+    :math:`C_{ij}=1` if (i, j) has a must-link (ml) constraint. 
+
+    :math:`C_{ij}=-1` if (i, j) has a must-not-link (mnl) constraint. 
+    
+    :math:`C_{ij}=0` if (i, j) has no constraints.
+    """
 
     n = D.shape[0]
     triu_ids = jnp.triu_indices_from(D, k=1)
@@ -146,35 +129,31 @@ def ckruskals_prims_post(D : jax.Array,
                          ncc : int,
                          C : jax.Array) ->  Tuple[jax.Array, jax.Array]:
 
-    '''
-    Performs kruskals algorithm on the fully connected graph with
-    weights given by D, respecting must-link and must-not-link
-    constraints given by the matrix C. Note this problem is no
-    longer a matroid structure like kruskals algorithm, and is
-    hence only a heuristic. The must-link edges are considered
-    first by the algorithm, and before any edge is added
-    there is a check to ensure no must-not-link constraint
-    is violated. Afterwards, prims algorithm is ran on each connected
-    component of the forest, which will guarentee a more better
-    (or at worst equal) solution.
+    """Calculates the adjacency matrix and cluster connectivity matrix
+    of the minimum weight ncc-spanning forest. Uses a biased heuristic
+    based on kruskals algorithm to create the forest. Afterwards applies
+    prims algorithm to recalculate the spanning tree of each connected
+    component in the forest (hence guarenteed to obtain a solution
+    at least as good if not better than `ckruskals`).
 
-    Inputs:
-        D : jax.Array, distance matrix.
-        ncc : int, number of connected components.
-        C : jax.Array, constraint matrix (see-below for more info).
-    Outputs:
-        A : jax.Array, adjacency matrix of forest.
-        M : jax.Array, cluster equivalence matrix of forest.
+    Args:
+        D (jax.Array): distance matrix.
+        ncc (int): number of connected components. 
+        C (jax.Array) : constraint matrix.
 
-    A_ij = 1 if the edge (i, j) is in the forest.
-    M_ij = 1 if (i, j) are in the same connected component of the forest.
-    C_ij = 1 if (i, j) has a must-link constraint.
-    C_ij = -1 if (i, j) has a must-not-link constraint.
-    C_ij = 0 if (i, j) has no constraint.
-    '''
+    Returns:
+        Tuple[jax.Array, jax.Array]: A, M
 
+    :math:`A_{ij} = 1` if the edge (i, j) is in the forest.
 
+    :math:`M_{ij} = 1` if i and j are in the same connected component of the forest.
 
+    :math:`C_{ij}=1` if (i, j) has a must-link (ml) constraint. 
+
+    :math:`C_{ij}=-1` if (i, j) has a must-not-link (mnl) constraint. 
+    
+    :math:`C_{ij}=0` if (i, j) has no constraints.
+    """
     n = D.shape[0]
     triu_ids = jnp.triu_indices_from(D, k=1)
     triu_rows, triu_cols = triu_ids
@@ -212,9 +191,17 @@ def ckruskals_prims_post(D : jax.Array,
 def get_flp_solver(constrained : bool=False,
                    use_prims : bool=False
                   ) -> Callable:
+    """Returns a solver of the maximum weight k-connected component
+    forest lp (flp).
 
-    """
-    Returns a solver for the tree linear program (flp).
+    Args:
+        constrained (bool, optional): option for solver to take constraints. Defaults to False.
+        use_prims (bool, optional): option for solver to use prims pre/post-processing. Defaults to False.
+
+    Returns:
+        Callable: a solver which takes in as inputs S,
+        a similarity matrix (jax.Array), ncc (int) and a constraint matrix C
+        (jax.Array) if the constrained variable is set to True.
     """
 
 
@@ -229,4 +216,3 @@ def get_flp_solver(constrained : bool=False,
         else:
             fn = lambda S, ncc, C : ckruskals(-S, ncc, C)
     return fn
-

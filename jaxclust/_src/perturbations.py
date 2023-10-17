@@ -1,21 +1,6 @@
 import jax
 import jax.numpy as jnp
 from typing import Callable, Tuple, Any, Union
-# from jaxclust._src.solvers import Solver, CSolver
-
-
-# types of Perturbed flp solver and constrained variant (same as Solver and CSolver)
-# but with additional random PRNGKey input.
-
-# PertSolver = Callable[
-#     Tuple[jax.Array, int, jax.random.PRNGKey],
-#     Tuple[jax.Array, jax.Array]
-# ]
-# PertCSolver = Callable[
-#     Tuple[jax.Array, int, jax.Array, jax.random.PRNGKey],
-#     Tuple[jax.Array, jax.Array]
-# ]
-
 
 class Normal:
   """Normal distribution."""
@@ -29,22 +14,24 @@ class Normal:
     return -0.5 * inputs ** 2
 
 
-
 def make_pert_flp_solver(flp_solver : Callable,
                          constrained : bool,
                          num_samples: int = 1000,
                          sigma: float = 0.1,
                          noise=Normal()) -> Callable:
-    """
-    Inputs:
-        flp_solver : Callable to solve the forest LP.
-        constrained : bool, indicating if the solver uses a constraint matrix C or not.
-        num_samples : number of samples for monte carlo estimate of expectation.
-        sigma : noise amplitude perturbations.
-        noise : A class following the structure given of the code for Normal.
+    """Creates a perturbed solver of the maximum weight k-connected-component
+    forest lp (flp).
+
+    Args:
+        flp_solver (Callable): an flp solver from `jaxclust.solvers`.
+        constrained (bool): indicates if `flp_solver` takes constraints.
+        num_samples (int, optional):  number of samples for MC estimator. Defaults to 1000.
+        sigma (float, optional): magnitude of noise. Defaults to 0.1.
+        noise (_type_, optional): noise distribution. Defaults to Normal().
 
     Returns:
-        forward_pert : Callable with custom JVP.
+        Callable: an flp solver taking the same args and kwargs as `flp_solver`
+        as well as an rng (jax.random.PRNGKey).
     """
 
     if not constrained:

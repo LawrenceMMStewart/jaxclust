@@ -22,27 +22,42 @@ jobs:
       - name: Install Pandoc
         run: sudo dpkg -i pandoc-2.7.3-1-amd64.deb
 
-      - name: Build documentation
-        run: cd docs && sphinx-build . _build
-
-      - name: Debug 
-        run: |  
-          pwd
-          echo "------"
-          ls 
-          echo "------"
-          ls docs
-          echo "------"
-          ls docs/_build
-          echo "nothing"
-         
+      - name: build documentation
+        run: make html
+      - run: touch _build/html/.nojekyll
       - uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         with:
-          source-directory: 'docs/_build'
+          source-directory: '_build/html'
           destination-github-username: 'LawrenceMMStewart'
           destination-repository-name: 'jaxclust'
           user-email: stewart.ai@pm.me
           target-branch: gh-pages
-          target-directory: dev
+          target-directory: docs
+    
+
+      # - name: Build documentation
+      #   run: cd docs && sphinx-build . _build
+
+      # - name: Debug 
+      #   run: |  
+      #     pwd
+      #     echo "------"
+      #     ls 
+      #     echo "------"
+      #     ls docs
+      #     echo "------"
+      #     ls docs/_build
+      #     echo "nothing"
+         
+      # - uses: cpina/github-action-push-to-another-repository@main
+      #   env:
+      #     SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #   with:
+      #     source-directory: 'docs/_build'
+      #     destination-github-username: 'LawrenceMMStewart'
+      #     destination-repository-name: 'jaxclust'
+      #     user-email: stewart.ai@pm.me
+      #     target-branch: gh-pages
+      #     target-directory: docs

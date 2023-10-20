@@ -101,28 +101,28 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import sys
-sys.path.append(&#39;../..&#39;)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../..&#39;</span><span class="p">)</span>
 
-import jax
-import numpy as np
-import jax.numpy as jnp
-from typing import Callable, Tuple, Any
-import tensorflow as tf
-import jaxclust
-import optax
-import flax.linen as nn
-from flax import core, struct
-from flax.training import train_state
-import optax
-from functools import partial
-import tqdm
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+<span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">jaxclust</span>
+<span class="kn">import</span> <span class="nn">optax</span>
+<span class="kn">import</span> <span class="nn">flax.linen</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">core</span><span class="p">,</span> <span class="n">struct</span>
+<span class="kn">from</span> <span class="nn">flax.training</span> <span class="kn">import</span> <span class="n">train_state</span>
+<span class="kn">import</span> <span class="nn">optax</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-np.random.seed(0)
-# Ensure TF does not see GPU and grab all GPU memory.
-tf.config.set_visible_devices([], device_type=&#39;GPU&#39;)
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># Ensure TF does not see GPU and grab all GPU memory.</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set_visible_devices</span><span class="p">([],</span> <span class="n">device_type</span><span class="o">=</span><span class="s1">&#39;GPU&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -137,36 +137,36 @@ tf.config.set_visible_devices([], device_type=&#39;GPU&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import tensorflow_datasets as tfds
-DSHAPE = (28, 28, 1) # shape of an image for CNN
-BS = 32
-DATA_DIR = &#39;/tmp/tfds&#39;
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
+<span class="n">DSHAPE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># shape of an image for CNN</span>
+<span class="n">BS</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="s1">&#39;/tmp/tfds&#39;</span>
 
-@jax.jit
-def process_nist_batch(x, y):
-    x = x.reshape((len(x), ) + DSHAPE)
-    x = x / 255.
-    yhot = jax.nn.one_hot(y, 10)
-    return x, yhot
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">process_nist_batch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">)</span> <span class="o">+</span> <span class="n">DSHAPE</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="mf">255.</span>
+    <span class="n">yhot</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">yhot</span>
 
-DS_TRAIN = tfds.load(name=&#39;mnist&#39;, batch_size=-1, data_dir=DATA_DIR, split=&#39;train&#39;, as_supervised=True)
-DS_TRAIN = tf.data.Dataset.from_tensor_slices(DS_TRAIN).shuffle(buffer_size=60000, seed=0, reshuffle_each_iteration=True)
-DS_TRAIN = DS_TRAIN.batch(batch_size=BS)
-train_iterator = iter(tfds.as_numpy(DS_TRAIN))
+<span class="n">DS_TRAIN</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mnist&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">as_supervised</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">DS_TRAIN</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">(</span><span class="n">DS_TRAIN</span><span class="p">)</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">buffer_size</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reshuffle_each_iteration</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">DS_TRAIN</span> <span class="o">=</span> <span class="n">DS_TRAIN</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">BS</span><span class="p">)</span>
+<span class="n">train_iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">tfds</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">(</span><span class="n">DS_TRAIN</span><span class="p">))</span>
 
 
-def next_train(train_iterator):
-    try:
-        (x, y)= next(train_iterator)
-        if x.shape[0] != BS:
-            train_iterator = iter(tfds.as_numpy(DS_TRAIN))
-            (x, y) = next(train_iterator)
-    except StopIteration:
-        train_iterator = iter(tfds.as_numpy(DS_TRAIN))
-        (x, y)= next(train_iterator)
+<span class="k">def</span> <span class="nf">next_train</span><span class="p">(</span><span class="n">train_iterator</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">train_iterator</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">BS</span><span class="p">:</span>
+            <span class="n">train_iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">tfds</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">(</span><span class="n">DS_TRAIN</span><span class="p">))</span>
+            <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">train_iterator</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="n">train_iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">tfds</span><span class="o">.</span><span class="n">as_numpy</span><span class="p">(</span><span class="n">DS_TRAIN</span><span class="p">))</span>
+        <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">train_iterator</span><span class="p">)</span>
 
-    x, y = process_nist_batch(x, y)
-    return (x, y), train_iterator
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">process_nist_batch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">train_iterator</span>
 <br/><br/></pre></div>
 </div>
 </div>
@@ -213,24 +213,24 @@ def next_train(train_iterator):
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class CNN(nn.Module):
-    &quot;&quot;&quot;A simple CNN model.&quot;&quot;&quot;
-    dense1: int = 256 # size of dense layer
-    dense2 : int = 256 # size of output layer
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple CNN model.&quot;&quot;&quot;</span>
+    <span class="n">dense1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span> <span class="c1"># size of dense layer</span>
+    <span class="n">dense2</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span> <span class="c1"># size of output layer</span>
 
-    @nn.compact
-    def __call__(self, x, training=True):
-        x = nn.Conv(features=32, kernel_size=(3, 3))(x)
-        x = nn.relu(x)
-        x = nn.avg_pool(x, window_shape=(2, 2), strides=(2, 2))
-        x = nn.Conv(features=64, kernel_size=(3, 3))(x)
-        x = nn.relu(x)
-        x = nn.avg_pool(x, window_shape=(2, 2), strides=(2, 2))
-        x = x.reshape((x.shape[0], -1))  # flatten
-        x = nn.Dense(features=self.dense1)(x)
-        x = nn.relu(x)
-        x = nn.Dense(features=self.dense2)(x)
-        return x
+    <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">avg_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">window_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">avg_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">window_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># flatten</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dense1</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dense2</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
 <br/></pre></div>
 </div>
 </div>
@@ -245,15 +245,15 @@ def next_train(train_iterator):
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def pairwise_square_distance(X):
-    &quot;&quot;&quot;
-    euclidean pairwise square distance between data points
-    &quot;&quot;&quot;
-    n = X.shape[0]
-    G = jnp.dot(X, X.T)
-    g = jnp.diag(G).reshape(n, 1)
-    o = jnp.ones_like(g)
-    return jnp.dot(g, o.T) + jnp.dot(o, g.T) - 2 * G
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pairwise_square_distance</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    euclidean pairwise square distance between data points</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">G</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">o</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">G</span>
 <br/></pre></div>
 </div>
 </div>
@@ -269,8 +269,8 @@ def next_train(train_iterator):
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># flp = forest linear program
-solver = jaxclust.solvers.get_flp_solver(constrained=False, use_prims=True)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># flp = forest linear program</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">solvers</span><span class="o">.</span><span class="n">get_flp_solver</span><span class="p">(</span><span class="n">constrained</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_prims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -279,15 +279,15 @@ solver = jaxclust.solvers.get_flp_solver(constrained=False, use_prims=True)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>X = np.random.randn(BS, 3) # sample a batch of 3D data
-S = - pairwise_square_distance(X) # calculate Sigma
-A, M = solver(S, 10) # call the solver
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">BS</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># sample a batch of 3D data</span>
+<span class="n">S</span> <span class="o">=</span> <span class="o">-</span> <span class="n">pairwise_square_distance</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="c1"># calculate Sigma</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1"># call the solver</span>
 
-fig, axs = plt.subplots(1, 2)
-axs[0].imshow(A)
-axs[1].imshow(M)
-axs[0].set_title(r&#39;$A_{10}(\Sigma)$&#39;)
-axs[1].set_title(r&#39;$M_{10}^*(\Sigma)$&#39;)
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$A_</span><span class="si">{10}</span><span class="s1">(\Sigma)$&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$M_</span><span class="si">{10}</span><span class="s1">^*(\Sigma)$&#39;</span><span class="p">)</span>
 <br/></pre></div>
 </div>
 </div>
@@ -323,7 +323,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>csolver = jaxclust.solvers.get_flp_solver(constrained=True, use_prims=True)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">csolver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">solvers</span><span class="o">.</span><span class="n">get_flp_solver</span><span class="p">(</span><span class="n">constrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_prims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -342,18 +342,18 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>NUM_SAMPLES = 100
-SIGMA = 0.1
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NUM_SAMPLES</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">SIGMA</span> <span class="o">=</span> <span class="mf">0.1</span>
 
-pert_solver = jaxclust.perturbations.make_pert_flp_solver(solver,
-                                                          constrained=False,
-                                                          num_samples=NUM_SAMPLES,
-                                                          sigma=SIGMA)
+<span class="n">pert_solver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">perturbations</span><span class="o">.</span><span class="n">make_pert_flp_solver</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span>
+                                                          <span class="n">constrained</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                          <span class="n">num_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span>
+                                                          <span class="n">sigma</span><span class="o">=</span><span class="n">SIGMA</span><span class="p">)</span>
 
-pert_csolver = jaxclust.perturbations.make_pert_flp_solver(csolver,
-                                                           constrained=True,
-                                                           num_samples=NUM_SAMPLES,
-                                                           sigma=SIGMA)
+<span class="n">pert_csolver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">perturbations</span><span class="o">.</span><span class="n">make_pert_flp_solver</span><span class="p">(</span><span class="n">csolver</span><span class="p">,</span>
+                                                           <span class="n">constrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                           <span class="n">num_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span>
+                                                           <span class="n">sigma</span><span class="o">=</span><span class="n">SIGMA</span><span class="p">)</span>
 <br/><br/></pre></div>
 </div>
 </div>
@@ -371,36 +371,36 @@ pert_csolver = jaxclust.perturbations.make_pert_flp_solver(csolver,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class DC(nn.Module):
-    &#39;&#39;&#39;
-    supervised differentiable clustering
-    &#39;&#39;&#39;
-    backbone : nn.Module # model backbone used to create embeddings
-    pert_solver : Callable # perturbed clustering
-    pert_csolver : Callable # perturbed constrained clustering
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DC</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    supervised differentiable clustering</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">backbone</span> <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="c1"># model backbone used to create embeddings</span>
+    <span class="n">pert_solver</span> <span class="p">:</span> <span class="n">Callable</span> <span class="c1"># perturbed clustering</span>
+    <span class="n">pert_csolver</span> <span class="p">:</span> <span class="n">Callable</span> <span class="c1"># perturbed constrained clustering</span>
 
-    # call is equivalent to embedding the data
-    @nn.compact
-    def __call__(self, *args, **kwargs):
-        return self.backbone(*args, **kwargs)
+    <span class="c1"># call is equivalent to embedding the data</span>
+    <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    def similarity(self, Z):
-        S =  -pairwise_square_distance(Z)
-        # standardizing reduces dependence of sigma on x
-        S = (S - S.mean()) / S.std()
-        return S
+    <span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+        <span class="n">S</span> <span class="o">=</span>  <span class="o">-</span><span class="n">pairwise_square_distance</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="c1"># standardizing reduces dependence of sigma on x</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span> <span class="o">-</span> <span class="n">S</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">S</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">S</span>
 
-    def forward(self, x, yhot, ncc, key, training=True):
-        Z = self.__call__(x, training=training)
-        S = self.similarity(Z)
-        M_target = yhot @ yhot.T
-        C = 2 * M_target - 1
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="n">M_target</span> <span class="o">=</span> <span class="n">yhot</span> <span class="o">@</span> <span class="n">yhot</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">M_target</span> <span class="o">-</span> <span class="mi">1</span>
 
-        Ak, Fk, Mk = self.pert_solver(S, ncc, key)
-        Akc, Fkc, Mkc = self.pert_csolver(S, ncc, C, key)
+        <span class="n">Ak</span><span class="p">,</span> <span class="n">Fk</span><span class="p">,</span> <span class="n">Mk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pert_solver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">Akc</span><span class="p">,</span> <span class="n">Fkc</span><span class="p">,</span> <span class="n">Mkc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pert_csolver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
-        partial_fy_loss = Fk - Fkc
-        return partial_fy_loss
+        <span class="n">partial_fy_loss</span> <span class="o">=</span> <span class="n">Fk</span> <span class="o">-</span> <span class="n">Fkc</span>
+        <span class="k">return</span> <span class="n">partial_fy_loss</span>
 <br/></pre></div>
 </div>
 </div>
@@ -409,37 +409,37 @@ pert_csolver = jaxclust.perturbations.make_pert_flp_solver(csolver,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class DCTrainState(struct.PyTreeNode):
-    step: int
-    apply_fn: Callable = struct.field(pytree_node=False)
-    forward_fn: Callable = struct.field(pytree_node=False)
-    params: core.FrozenDict[str, Any] = struct.field(pytree_node=True)
-    tx: optax.GradientTransformation = struct.field(pytree_node=False)
-    opt_state: optax.OptState = struct.field(pytree_node=True)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DCTrainState</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">PyTreeNode</span><span class="p">):</span>
+    <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">apply_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">forward_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">core</span><span class="o">.</span><span class="n">FrozenDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tx</span><span class="p">:</span> <span class="n">optax</span><span class="o">.</span><span class="n">GradientTransformation</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">opt_state</span><span class="p">:</span> <span class="n">optax</span><span class="o">.</span><span class="n">OptState</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    def apply_gradients(self, *, grads, **kwargs):
-        updates, new_opt_state = self.tx.update(
-            grads, self.opt_state, self.params)
-        new_params = optax.apply_updates(self.params, updates)
-        return self.replace(
-            step=self.step + 1,
-            params=new_params,
-            opt_state=new_opt_state,
-            **kwargs,
-        )
+    <span class="k">def</span> <span class="nf">apply_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">grads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">updates</span><span class="p">,</span> <span class="n">new_opt_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">grads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">new_params</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">new_params</span><span class="p">,</span>
+            <span class="n">opt_state</span><span class="o">=</span><span class="n">new_opt_state</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    @classmethod
-    def create(cls, *, apply_fn, forward_fn, params, tx, **kwargs):
-        opt_state = tx.init(params)
-        return cls(
-            step=0,
-            apply_fn=apply_fn,
-            forward_fn=partial(apply_fn, method=forward_fn),
-            params=params,
-            tx=tx,
-            opt_state=opt_state,
-            **kwargs,
-        )
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">apply_fn</span><span class="p">,</span> <span class="n">forward_fn</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">opt_state</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">step</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">apply_fn</span><span class="o">=</span><span class="n">apply_fn</span><span class="p">,</span>
+            <span class="n">forward_fn</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">apply_fn</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">forward_fn</span><span class="p">),</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">tx</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span>
+            <span class="n">opt_state</span><span class="o">=</span><span class="n">opt_state</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -448,12 +448,12 @@ pert_csolver = jaxclust.perturbations.make_pert_flp_solver(csolver,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>optimizer = optax.adamw(3e-4, weight_decay=1e-4)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">adamw</span><span class="p">(</span><span class="mf">3e-4</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
 
-model = DC(
-    CNN(),
-    pert_solver=pert_solver,
-    pert_csolver=pert_csolver)
+<span class="n">model</span> <span class="o">=</span> <span class="n">DC</span><span class="p">(</span>
+    <span class="n">CNN</span><span class="p">(),</span>
+    <span class="n">pert_solver</span><span class="o">=</span><span class="n">pert_solver</span><span class="p">,</span>
+    <span class="n">pert_csolver</span><span class="o">=</span><span class="n">pert_csolver</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -461,8 +461,8 @@ model = DC(
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dummy_x = jnp.ones((BS, ) + (DSHAPE))
-params = model.init({&#39;params&#39; : jax.random.PRNGKey(0)}, dummy_x, training=True)[&#39;params&#39;]
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dummy_x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">BS</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">DSHAPE</span><span class="p">))</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">init</span><span class="p">({</span><span class="s1">&#39;params&#39;</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)},</span> <span class="n">dummy_x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
 <br/></pre></div>
 </div>
 </div>
@@ -470,8 +470,8 @@ params = model.init({&#39;params&#39; : jax.random.PRNGKey(0)}, dummy_x, trainin
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from clu import parameter_overview
-print(parameter_overview.get_parameter_overview(params))
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clu</span> <span class="kn">import</span> <span class="n">parameter_overview</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parameter_overview</span><span class="o">.</span><span class="n">get_parameter_overview</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
 <br/></pre></div>
 </div>
 </div>
@@ -499,12 +499,12 @@ Total: 887,680
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>state = DCTrainState.create(
-    apply_fn=model.apply,
-    forward_fn=model.forward,
-    params = params,
-    tx = optimizer
-)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">DCTrainState</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">apply_fn</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">,</span>
+    <span class="n">forward_fn</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">optimizer</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -513,13 +513,13 @@ Total: 887,680
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>@jax.jit
-def train_step_fn(state, X, Yhot, ncc, rngs):
-    def forward(params, X, Yhot, ncc, rngs):
-        return state.forward_fn({&#39;params&#39; : params}, X, Yhot, ncc, rngs[&#39;noise&#39;], True, rngs=rngs)
-    loss, grads = jax.value_and_grad(forward)(state.params, X, Yhot, ncc, rngs)
-    state = state.apply_gradients(grads=grads)
-    return state, loss, grads
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">train_step_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">forward_fn</span><span class="p">({</span><span class="s1">&#39;params&#39;</span> <span class="p">:</span> <span class="n">params</span><span class="p">},</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">[</span><span class="s1">&#39;noise&#39;</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">)</span>
+    <span class="n">loss</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">forward</span><span class="p">)(</span><span class="n">state</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="n">grads</span><span class="o">=</span><span class="n">grads</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">grads</span>
 </pre></div>
 </div>
 </div>
@@ -528,15 +528,15 @@ def train_step_fn(state, X, Yhot, ncc, rngs):
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>NSTEPS = 300
-rngs = {&#39;noise&#39; : jax.random.PRNGKey(0)}
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NSTEPS</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">rngs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;noise&#39;</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)}</span>
 
-losses = []
-for i in tqdm.tqdm(range(NSTEPS)):
-      rngs = {k : jax.random.fold_in(v, i) for (k, v) in rngs.items()}
-      (X, Yhot), train_iterator = next_train(train_iterator)
-      state, pl, grads = train_step_fn(state, X, Yhot, 10, rngs)
-      losses.append(pl.item())
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NSTEPS</span><span class="p">)):</span>
+      <span class="n">rngs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">fold_in</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rngs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+      <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">),</span> <span class="n">train_iterator</span> <span class="o">=</span> <span class="n">next_train</span><span class="p">(</span><span class="n">train_iterator</span><span class="p">)</span>
+      <span class="n">state</span><span class="p">,</span> <span class="n">pl</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">train_step_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">rngs</span><span class="p">)</span>
+      <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 <br/></pre></div>
 </div>
 </div>
@@ -553,14 +553,14 @@ for i in tqdm.tqdm(range(NSTEPS)):
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
-def moving_average(x, w):
-    return np.convolve(x, np.ones(w), &#39;valid&#39;) / w
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="k">def</span> <span class="nf">moving_average</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="s1">&#39;valid&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span>
 
-plt.plot(moving_average(losses, 10), color=&#39;g&#39;, label=&#39;moving average&#39;)
-plt.plot(losses, color=&#39;b&#39;, alpha=0.2, label=&#39;raw&#39;)
-plt.xlabel(&#39;step&#39;)
-plt.ylabel(&#39;Partial FY Loss&#39;)
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">moving_average</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;moving average&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Partial FY Loss&#39;</span><span class="p">)</span>
 <br/></pre></div>
 </div>
 </div>
@@ -585,13 +585,13 @@ Text(0, 0.5, &#39;Partial FY Loss&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>NTSNE = 3000
-X, Y = tfds.load(name=&#39;mnist&#39;, batch_size=-1, data_dir=DATA_DIR, split=&#39;train&#39;, as_supervised=True)
-X = np.array(X)
-Y = np.array(Y)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NTSNE</span> <span class="o">=</span> <span class="mi">3000</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mnist&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">as_supervised</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
 
-X = X[:NTSNE].reshape(-1, 28, 28, 1) / 255.0
-Y = Y[:NTSNE].astype(&#39;int&#39;)
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:</span><span class="n">NTSNE</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:</span><span class="n">NTSNE</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -599,9 +599,9 @@ Y = Y[:NTSNE].astype(&#39;int&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from sklearn.manifold import TSNE
-V = state.apply_fn({&#39;params&#39; : state.params}, X)
-tsne = TSNE(n_components=2).fit_transform(V)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="kn">import</span> <span class="n">TSNE</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">apply_fn</span><span class="p">({</span><span class="s1">&#39;params&#39;</span> <span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">params</span><span class="p">},</span> <span class="n">X</span><span class="p">)</span>
+<span class="n">tsne</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <br/></pre></div>
 </div>
 </div>
@@ -620,17 +620,17 @@ tsne = TSNE(n_components=2).fit_transform(V)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>TSNE_COLORS = [
-    &#39;#a6cee3&#39;,&#39;#1f78b4&#39;,&#39;#b2df8a&#39;,&#39;#33a02c&#39;,&#39;#fb9a99&#39;,&#39;#e31a1c&#39;,&#39;#fdbf6f&#39;,
-    &#39;#ff7f00&#39;,&#39;#cab2d6&#39;,&#39;#6a3d9a&#39;,
-]
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">TSNE_COLORS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;#a6cee3&#39;</span><span class="p">,</span><span class="s1">&#39;#1f78b4&#39;</span><span class="p">,</span><span class="s1">&#39;#b2df8a&#39;</span><span class="p">,</span><span class="s1">&#39;#33a02c&#39;</span><span class="p">,</span><span class="s1">&#39;#fb9a99&#39;</span><span class="p">,</span><span class="s1">&#39;#e31a1c&#39;</span><span class="p">,</span><span class="s1">&#39;#fdbf6f&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;#ff7f00&#39;</span><span class="p">,</span><span class="s1">&#39;#cab2d6&#39;</span><span class="p">,</span><span class="s1">&#39;#6a3d9a&#39;</span><span class="p">,</span>
+<span class="p">]</span>
 
-color_map = np.array([TSNE_COLORS[i] for i in range(10)])
+<span class="n">color_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">TSNE_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
 
-plt.scatter(tsne[:, 0], tsne[:, 1], color=color_map[Y], marker=&#39;.&#39;, alpha=0.4)
-plt.title(f&#39;tSNE of {NTSNE} MNIST data embeddings&#39;)
-plt.xticks([])
-plt.yticks([])
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tsne</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tsne</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color_map</span><span class="p">[</span><span class="n">Y</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tSNE of </span><span class="si">{</span><span class="n">NTSNE</span><span class="si">}</span><span class="s1"> MNIST data embeddings&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
 </pre></div>
 </div>
 </div>

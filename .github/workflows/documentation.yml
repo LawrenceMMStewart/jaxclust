@@ -23,8 +23,8 @@ jobs:
         run: sudo dpkg -i pandoc-2.7.3-1-amd64.deb
 
       - name: build documentation
-        run: make html
-      - run: touch _build/html/.nojekyll
+        run: cd docs && make html
+      - run: touch docs/_build/html/.nojekyll
       - uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

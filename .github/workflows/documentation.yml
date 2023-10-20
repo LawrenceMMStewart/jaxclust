@@ -22,37 +22,36 @@ jobs:
         run: sudo dpkg -i pandoc-2.7.3-1-amd64.deb
 
       - name: Build documentation
-        run: cd docs && sphinx-build . _build
+        run: cd docs && sphinx-build . ~/_build
 
       - name: Debug 
         run: |  
           pwd
           echo "------"
-          ls
+          cd ~ && pwd
           echo "------"
-          ls docs
+          cd ~ && ls
           echo "------"
-          ls docs/_build
+          cd ~ && ls _build
+          
 
-      - name: Init new repo in dist folder and commit generated files
-        run: |
-          mv docs/_build ~
-          cd ~/_build
-          git init
-          touch .nojekyll
-          git add -A
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -m 'deploy'
+      # - name: Init new repo in dist folder and commit generated files
+      #   run: |
+      #     cd ~/_build
+      #     touch .nojekyll
+      #     git add -A
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git commit -m 'deploy'
 
 
-      - name: Force push to destination branch
-        uses: ad-m/github-push-action@v0.5.0
-        with:
-          github_token: ${{ secrets.SSH_PRIVATE_KEY }}
-          branch: gh-pages
-          force: true
-          directory: ~/_build
+      # - name: Force push to destination branch
+      #   uses: ad-m/github-push-action@v0.5.0
+      #   with:
+      #     github_token: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     branch: gh-pages
+      #     force: true
+      #     directory: ~/_build
 
       # - name: Build documentation
       #   run: cd docs && sphinx-build . _build

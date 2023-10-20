@@ -36,7 +36,7 @@ jobs:
 
       - name: Init new repo in dist folder and commit generated files
         run: |
-          cd docs/_build/html/
+          cd docs/_build/
           git init
           touch .nojekyll
           git add -A
@@ -51,7 +51,7 @@ jobs:
           github_token: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: gh-pages
           force: true
-          directory: ./docs/_build/html
+          directory: ./docs/_build
 
       # - name: Build documentation
       #   run: cd docs && sphinx-build . _build

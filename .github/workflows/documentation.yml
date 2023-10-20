@@ -20,17 +20,39 @@ jobs:
         run: wget -c https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb
       - name: Install Pandoc
         run: sudo dpkg -i pandoc-2.7.3-1-amd64.deb
+
       - name: Build documentation
         run: cd docs && sphinx-build . _build
-      - name: Debug 
-        run: ls docs && ls docs/_build
-      - uses: cpina/github-action-push-to-another-repository@main
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Init new repo in dist folder and commit generated files
+        run: |
+          cd docs/_build/html/
+          git init
+          touch .nojekyll
+          git add -A
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m 'deploy'
+
+      - name: Force push to destination branch
+        uses: ad-m/github-push-action@v0.5.0
         with:
-          source-directory: 'docs/_build'
-          destination-github-username: 'LawrenceMMStewart'
-          destination-repository-name: 'jaxclust'
-          user-email: stewart.ai@pm.me
-          target-branch: main
-          target-directory: dev
+          github_token: ${{ secrets.SSH_PRIVATE_KEY }}
+          branch: gh-pages
+          force: true
+          directory: ./docs/_build/html
+
+      # - name: Build documentation
+      #   run: cd docs && sphinx-build . _build
+      # - name: Debug 
+      #   run: ls docs && ls docs/_build
+      # - uses: cpina/github-action-push-to-another-repository@main
+      #   env:
+      #     SSH_DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #   with:
+      #     source-directory: 'docs/_build'
+      #     destination-github-username: 'LawrenceMMStewart'
+      #     destination-repository-name: 'jaxclust'
+      #     user-email: stewart.ai@pm.me
+      #     target-branch: main
+      #     target-directory: dev

@@ -52,7 +52,7 @@ jobs:
           github_token: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: gh-pages
           force: true
-          directory: ./docs/_build
+          directory: ~/_build
 
       # - name: Build documentation
       #   run: cd docs && sphinx-build . _build

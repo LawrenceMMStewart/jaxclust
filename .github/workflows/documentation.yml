@@ -27,8 +27,11 @@ jobs:
       - name: Debug 
         run: |  
           pwd
+          echo "------"
           ls
+          echo "------"
           ls docs
+          echo "------"
           ls docs/_build
 
       - name: Init new repo in dist folder and commit generated files

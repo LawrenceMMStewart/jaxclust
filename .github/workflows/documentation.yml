@@ -33,6 +33,7 @@ jobs:
           ls docs
           echo "------"
           ls docs/_build
+          echo "nothing"
          
 
       - name: Init new repo in dist folder and commit generated files

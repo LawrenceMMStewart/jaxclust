@@ -8,6 +8,10 @@ jobs:
   build-and-deploy:
     name: "Build and deploy documentation"
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.SSH_PRIVATE_KEY}}
+
+
     steps:
       - uses: "actions/checkout@v3"
       - name: Set up Python 3.11
@@ -35,6 +39,8 @@ jobs:
           ls docs/_build
           echo "nothing"
          
+      - name: Configure Git
+        run: git config --global --add safe.directory /github/workspace
 
       - name: Init new repo in dist folder and commit generated files
         run: |

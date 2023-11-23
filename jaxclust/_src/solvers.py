@@ -1,15 +1,15 @@
 import jax
 import jax.numpy as jnp
-from typing import Tuple, Callable, Dict, Any, Union
 from jaxclust._src.prims import prims, prims_cc
+from typing import Tuple, Callable
 from jaxclust._src.forests import build_forest, build_mnn_forest
 
-def kruskals(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
+def kruskals(S : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
     """Calculates the adjacency matrix and cluster connectivity matrix
     of the minimum weight ncc-spanning forest using Kruskal's algorithm.
 
     Args:
-        D (jax.Array): distance matrix.
+        S (jax.Array): similarity matrix.
         ncc (int): number of connected components. 
 
     Returns:
@@ -21,6 +21,7 @@ def kruskals(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
 
     """
 
+    D = -S # uses legacy distance matrix code (before similarity matrix)
     n = D.shape[0]
     triu_ids = jnp.triu_indices_from(D, k=1)
     triu_rows, triu_cols = triu_ids
@@ -40,14 +41,14 @@ def kruskals(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
     return A, M
 
 
-def kruskals_prims_pre(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
+def kruskals_prims_pre(S : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
     """Calculates the adjacency matrix and cluster connectivity matrix
     of the minimum weight ncc-spanning forest. Uses Prim's algorithm
     to construct the full spanning tree, then applies Kruskal's algorithm
     to the edges in the spanning tree in order to calculate the forest.
 
     Args:
-        D (jax.Array): distance matrix.
+        S (jax.Array): similarity matrix.
         ncc (int): number of connected components. 
 
     Returns:
@@ -57,8 +58,8 @@ def kruskals_prims_pre(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
 
     :math:`M_{ij} = 1` if i and j are in the same connected component of the forest.
     """
+    D = -S # uses legacy distance matrix code (before similarity matrix)
     n = D.shape[0]
-    nsteps = n - ncc
     triu_ids = jnp.triu_indices_from(D, k=1)
     triu_rows, triu_cols = triu_ids
 
@@ -75,7 +76,7 @@ def kruskals_prims_pre(D : jax.Array, ncc : int) -> Tuple[jax.Array, jax.Array]:
     return A, M
 
 
-def ckruskals(D : jax.Array,
+def ckruskals(S : jax.Array,
               ncc : int,
               C : jax.Array) ->  Tuple[jax.Array, jax.Array]:
     """Calculates the adjacency matrix and cluster connectivity matrix
@@ -83,7 +84,7 @@ def ckruskals(D : jax.Array,
     based on kruskals algorithm to create the forest.
 
     Args:
-        D (jax.Array): distance matrix.
+        S (jax.Array): similarity matrix.
         ncc (int): number of connected components. 
         C (jax.Array) : constraint matrix.
 
@@ -101,6 +102,7 @@ def ckruskals(D : jax.Array,
     :math:`C_{ij}=0` if (i, j) has no constraints.
     """
 
+    D = -S # uses legacy distance matrix code (before similarity matrix)
     n = D.shape[0]
     triu_ids = jnp.triu_indices_from(D, k=1)
     triu_rows, triu_cols = triu_ids
@@ -125,7 +127,7 @@ def ckruskals(D : jax.Array,
     return A, M
 
 
-def ckruskals_prims_post(D : jax.Array,
+def ckruskals_prims_post(S : jax.Array,
                          ncc : int,
                          C : jax.Array) ->  Tuple[jax.Array, jax.Array]:
 
@@ -137,7 +139,7 @@ def ckruskals_prims_post(D : jax.Array,
     at least as good if not better than `ckruskals`).
 
     Args:
-        D (jax.Array): distance matrix.
+        S (jax.Array): similarity matrix.
         ncc (int): number of connected components. 
         C (jax.Array) : constraint matrix.
 
@@ -154,6 +156,8 @@ def ckruskals_prims_post(D : jax.Array,
     
     :math:`C_{ij}=0` if (i, j) has no constraints.
     """
+
+    D = -S # uses legacy distance matrix code (before similarity matrix)
     n = D.shape[0]
     triu_ids = jnp.triu_indices_from(D, k=1)
     triu_rows, triu_cols = triu_ids
@@ -206,13 +210,12 @@ def get_flp_solver(constrained : bool=False,
 
 
     if not constrained:
-        if prims:
-            fn = lambda S, ncc : kruskals_prims_pre(-S, ncc)
+        if use_prims:
+            return lambda S, ncc : kruskals_prims_pre(S, ncc)
         else:
-            fn = lambda S, ncc : kruskals(-S, ncc)
+            return lambda S, ncc : kruskals(S, ncc)
     elif constrained:
-        if prims:
-            fn = lambda S, ncc, C : ckruskals_prims_post(-S, ncc, C)
+        if use_prims:
+            return lambda S, ncc, C : ckruskals_prims_post(S, ncc, C)
         else:
-            fn = lambda S, ncc, C : ckruskals(-S, ncc, C)
-    return fn
+            return lambda S, ncc, C : ckruskals(S, ncc, C)

@@ -1,6 +1,3 @@
-from absl.testing import absltest
-from absl.testing import parameterized
-
 import jax
 import jax.numpy as jnp
 
@@ -25,14 +22,15 @@ class UnconstrainedTest(test_util.JAXTestCase):
     def test_trivial_two_points_1cc(self):
         X = jax.random.normal(self.rng, (2, 3))
         D = pairwise_square_distance(X)
-        C = jnp.zeros_like(D)
+        S = - D 
+        C = jnp.zeros_like(S)
 
-        A, M = kruskals(D, 1)
-        Ap, Mp = kruskals_prims_pre(D, 1)
-        cA, cM = ckruskals(D, 1, C)
-        cAp, cMp = ckruskals_prims_post(D, 1, C)
+        A, M = kruskals(S, 1)
+        Ap, Mp = kruskals_prims_pre(S, 1)
+        cA, cM = ckruskals(S, 1, C)
+        cAp, cMp = ckruskals_prims_post(S, 1, C)
 
-        T = jnp.ones_like(D)
+        T = jnp.ones_like(S)
 
         self.assertArraysEqual(A, T)
         self.assertArraysEqual(M, T)
@@ -50,12 +48,13 @@ class UnconstrainedTest(test_util.JAXTestCase):
     def test_trivial_two_points_2cc(self):
         X = jax.random.normal(self.rng, (2, 3))
         D = pairwise_square_distance(X)
+        S = - D 
         C = jnp.zeros_like(D)
 
-        A, M = kruskals(D, 2)
-        Ap, Mp = kruskals_prims_pre(D, 2)
-        cA, cM = ckruskals(D, 2, C)
-        cAp, cMp = ckruskals_prims_post(D, 2, C)
+        A, M = kruskals(S, 2)
+        Ap, Mp = kruskals_prims_pre(S, 2)
+        cA, cM = ckruskals(S, 2, C)
+        cAp, cMp = ckruskals_prims_post(S, 2, C)
 
         T = jnp.eye(2)
 
@@ -77,31 +76,32 @@ class UnconstrainedTest(test_util.JAXTestCase):
 
         X = jax.random.normal(self.rng, (4, 3))
         D = pairwise_square_distance(X)
+        S = - D 
 
-        kA1, kM1 = kruskals(D, 1)
-        kA2, kM2 = kruskals(D, 2)
-        kA3, kM3 = kruskals(D, 3)
-        kA4, kM4 = kruskals(D, 4)
+        kA1, kM1 = kruskals(S, 1)
+        kA2, kM2 = kruskals(S, 2)
+        kA3, kM3 = kruskals(S, 3)
+        kA4, kM4 = kruskals(S, 4)
 
-        kpA1, kpM1 = kruskals(D, 1)
-        kpA2, kpM2 = kruskals(D, 2)
-        kpA3, kpM3 = kruskals(D, 3)
-        kpA4, kpM4 = kruskals(D, 4)
+        kpA1, kpM1 = kruskals(S, 1)
+        kpA2, kpM2 = kruskals(S, 2)
+        kpA3, kpM3 = kruskals(S, 3)
+        kpA4, kpM4 = kruskals(S, 4)
 
         # running the constrained versions with no contraints should give same results
-        C = jnp.zeros_like(D)
+        C = jnp.zeros_like(S)
 
-        ckA1, ckM1 = ckruskals(D, 1, C)
-        ckA2, ckM2 = ckruskals(D, 2, C)
-        ckA3, ckM3 = ckruskals(D, 3, C)
-        ckA4, ckM4 = ckruskals(D, 4, C)
+        ckA1, ckM1 = ckruskals(S, 1, C)
+        ckA2, ckM2 = ckruskals(S, 2, C)
+        ckA3, ckM3 = ckruskals(S, 3, C)
+        ckA4, ckM4 = ckruskals(S, 4, C)
 
 
 
-        ckpA1, ckpM1 = ckruskals_prims_post(D, 1, C)
-        ckpA2, ckpM2 = ckruskals_prims_post(D, 2, C)
-        ckpA3, ckpM3 = ckruskals_prims_post(D, 3, C)
-        ckpA4, ckpM4 = ckruskals_prims_post(D, 4, C)
+        ckpA1, ckpM1 = ckruskals_prims_post(S, 1, C)
+        ckpA2, ckpM2 = ckruskals_prims_post(S, 2, C)
+        ckpA3, ckpM3 = ckruskals_prims_post(S, 3, C)
+        ckpA4, ckpM4 = ckruskals_prims_post(S, 4, C)
 
 
 
@@ -197,7 +197,8 @@ class UnconstrainedTest(test_util.JAXTestCase):
     def test_full_cluster_nx(self):
         X = jax.random.normal(self.rng, (6, 3))
         D = pairwise_square_distance(X)
-        C = jnp.zeros_like(D)
+        S = - D 
+        C = jnp.zeros_like(S)
         A = jnp.array([
             [1, 0, 0, 0, 0, 1],
             [0, 1, 0, 1, 0, 1],
@@ -209,10 +210,10 @@ class UnconstrainedTest(test_util.JAXTestCase):
         M = jnp.ones_like(A)
 
 
-        kA, kM = kruskals(D, 1)
-        ckA, ckM = ckruskals(D, 1, C)
-        kpA, kpM = kruskals_prims_pre(D, 1)
-        ckpA, ckpM = ckruskals_prims_post(D, 1, C)
+        kA, kM = kruskals(S, 1)
+        ckA, ckM = ckruskals(S, 1, C)
+        kpA, kpM = kruskals_prims_pre(S, 1)
+        ckpA, ckpM = ckruskals_prims_post(S, 1, C)
 
 
         self.assertArraysEqual(kA, A)
@@ -234,6 +235,7 @@ class Constrained_clustering(test_util.JAXTestCase):
 
         X = jnp.array([[-1, -1], [1, -1], [4, 0], [-6, 0]], dtype=jnp.float32)
         D = pairwise_square_distance(X)
+        S = - D 
 
         C = jnp.array([
             [0, 0, 0, 0],
@@ -242,8 +244,8 @@ class Constrained_clustering(test_util.JAXTestCase):
             [0, 0, 1, 0]
         ], dtype=jnp.float32)
 
-        cA, _ = ckruskals(D, 1, C)
-        cpA, _ = ckruskals_prims_post(D, 1, C)
+        cA, _ = ckruskals(S, 1, C)
+        cpA, _ = ckruskals_prims_post(S, 1, C)
 
 
         A1 = jnp.array([
@@ -273,6 +275,7 @@ class Constrained_clustering(test_util.JAXTestCase):
 
         X = jnp.array([[-1, -1], [1, -1], [4, 0], [-6, 0]], dtype=jnp.float32)
         D = pairwise_square_distance(X)
+        S = - D 
 
         C = jnp.array([
             [0, 0, 0, 0],
@@ -281,8 +284,8 @@ class Constrained_clustering(test_util.JAXTestCase):
             [0, 0, 1, 0]
         ], dtype=jnp.float32)
 
-        cA, _ = ckruskals(D, 2, C)
-        cpA, _ = ckruskals_prims_post(D, 2, C)
+        cA, _ = ckruskals(S, 2, C)
+        cpA, _ = ckruskals_prims_post(S, 2, C)
 
 
         A1 = jnp.array([
@@ -305,6 +308,7 @@ class Constrained_clustering(test_util.JAXTestCase):
 
         X = jnp.array([[-1, -1], [1, -1], [4, 0], [-6, 0]], dtype=jnp.float32)
         D = pairwise_square_distance(X)
+        S = - D 
 
         C = jnp.array([
             [0, 0, 0, 0],
@@ -313,8 +317,8 @@ class Constrained_clustering(test_util.JAXTestCase):
             [0, 0, 1, 0]
         ], dtype=jnp.float32)
 
-        cA, _ = ckruskals(D, 2, C)
-        cpA, _ = ckruskals_prims_post(D, 2, C)
+        cA, _ = ckruskals(S, 2, C)
+        cpA, _ = ckruskals_prims_post(S, 2, C)
 
 
         A1 = jnp.array([
@@ -352,6 +356,7 @@ class Postprocessing_with_prims_leads_to_better_tree(test_util.JAXTestCase):
     def test_weight_of_constrained_forest(self):
         X = jax.random.normal(self.rng, shape=(100, 3))
         D  = pairwise_square_distance(X)
+        S = - D 
 
         e_best, e_worst = self.find_best_and_worst_edge(D)
         C = jnp.zeros_like(D)
@@ -367,8 +372,8 @@ class Postprocessing_with_prims_leads_to_better_tree(test_util.JAXTestCase):
         C = C.at[l, k].set(1)
 
 
-        A, M = ckruskals(D, 10, C)
-        Ap, Mp = ckruskals_prims_post(D, 10, C)
+        A, M = ckruskals(S, 10, C)
+        Ap, Mp = ckruskals_prims_post(S, 10, C)
 
 
         F = jnp.sum(A * D)
@@ -383,6 +388,7 @@ class Postprocessing_with_prims_leads_to_better_tree(test_util.JAXTestCase):
     def test_weight_of_constrained_forest_2(self):
         X = jax.random.normal(self.rng, shape=(50, 3))
         D  = pairwise_square_distance(X)
+        S = - D 
 
         e_best, e_worst = self.find_best_and_worst_edge(D)
         C = jnp.zeros_like(D)
@@ -398,8 +404,8 @@ class Postprocessing_with_prims_leads_to_better_tree(test_util.JAXTestCase):
         C = C.at[l, k].set(1)
 
 
-        A, M = ckruskals(D, 15, C)
-        Ap, Mp = ckruskals_prims_post(D, 15, C)
+        A, M = ckruskals(S, 15, C)
+        Ap, Mp = ckruskals_prims_post(S, 15, C)
 
 
         F = jnp.sum(A * D)
@@ -449,8 +455,9 @@ class Valid_coincidence_matrices_and_postprocessing(test_util.JAXTestCase):
             key = keys[i]
             p = ps[i]
             D, C = self.generate_D_and_C(key, nclasses=nclasses, p=p)
-            A, M = ckruskals(D, nclasses, C)
-            Ap, Mp = ckruskals_prims_post(D, nclasses, C)
+            S = -D
+            A, M = ckruskals(S, nclasses, C)
+            Ap, Mp = ckruskals_prims_post(S, nclasses, C)
 
             self.Assert_improved_weight(Ap, A, D)
             self.Assert_valid_coincidence_matrix(M, C)

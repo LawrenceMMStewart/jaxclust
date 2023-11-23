@@ -9,13 +9,15 @@ Hardware accelerated, batchable, differentiable clustering in `JAX <https://gith
 - **JIT-Compatible:** all clustering algorithms are `jax.jit` compatible.
 
 
-To install the latest release of JAXClust, use the following command::
+Pip installation coming soon.
 
-    pip install jaxclust
+.. To install the latest release of JAXClust, use the following command::
 
-Alternatively, it can be be installed from sources with the following command::
+..     pip install jaxclust
 
-    python setup.py install
+.. Alternatively, it can be be installed from sources with the following command::
+
+..     python setup.py install
 
 
 .. toctree::

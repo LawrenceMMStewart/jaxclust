@@ -98,7 +98,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">tensorflow-datasets</span></code>: to access MNIST.</p></li>
 </ul>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
@@ -134,7 +134,7 @@
 <li><p>The function <code class="docutils literal notranslate"><span class="pre">next_train</span></code> takes an iterator and returns a batch <span class="math notranslate nohighlight">\((x, y)\)</span>, and the iterator (and creates a new iterator if we reach the end of the current one).</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
@@ -175,7 +175,7 @@
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-10-16 16:45:17.766694: W tensorflow/core/platform/cloud/google_auth_provider.cc:184] All attempts to get a Google authentication bearer token failed, returning an empty token. Retrieving token from files failed with &#34;NOT_FOUND: Could not locate the credentials file.&#34;. Retrieving token from GCE failed with &#34;FAILED_PRECONDITION: Error executing an HTTP request: libcurl code 6 meaning &#39;Couldn&#39;t resolve host name&#39;, error details: Could not resolve host: metadata&#34;.
+2023-11-23 19:05:58.077676: W tensorflow/core/platform/cloud/google_auth_provider.cc:184] All attempts to get a Google authentication bearer token failed, returning an empty token. Retrieving token from files failed with &#34;NOT_FOUND: Could not locate the credentials file.&#34;. Retrieving token from GCE failed with &#34;FAILED_PRECONDITION: Error executing an HTTP request: libcurl code 6 meaning &#39;Couldn&#39;t resolve host name&#39;, error details: Could not resolve host: metadata&#34;.
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -190,7 +190,7 @@
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "624da6716acb41e98157540999d6b868", "version_major": 2, "version_minor": 0}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "293240c107e34ddcadb325e6f2326c44", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
@@ -205,12 +205,12 @@
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-10-16 16:45:21.276731: W tensorflow/core/platform/profile_utils/cpu_utils.cc:128] Failed to get CPU frequency: 0 Hz
+2023-11-23 19:06:01.055647: W tensorflow/core/platform/profile_utils/cpu_utils.cc:128] Failed to get CPU frequency: 0 Hz
 </pre></div></div>
 </div>
 <p>We begin by creating a simple CNN model in flax (this will be the model used to create our embeddings):</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -242,7 +242,7 @@
 \[\Sigma_{i,j} = - \|x_i-x_j\|_2^2.\]</div>
 <p>To calculate <span class="math notranslate nohighlight">\(\Sigma\)</span> we will write the function <code class="docutils literal notranslate"><span class="pre">pairwise_square_distance</span></code> using jax:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pairwise_square_distance</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
@@ -266,7 +266,7 @@
 \[F_k^*(\Sigma) =  \text{max}_{A \in \mathcal{C}_k} \langle A, \Sigma \rangle = \langle A_k^*(\Sigma), \Sigma \rangle.\]</div>
 <p>To obtain a solver for this we can use <code class="docutils literal notranslate"><span class="pre">jaxclust.solvers</span></code>:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># flp = forest linear program</span>
@@ -276,7 +276,7 @@
 </div>
 <p>Since <code class="docutils literal notranslate"><span class="pre">constrained</span> <span class="pre">=</span> <span class="pre">False</span></code>, the function <code class="docutils literal notranslate"><span class="pre">solver</span></code> will take in two arguments <code class="docutils literal notranslate"><span class="pre">Sigma</span></code> and <code class="docutils literal notranslate"><span class="pre">ncc</span></code> (the number of connected components), and returns <span class="math notranslate nohighlight">\(A^*(\Sigma)\)</span> and <span class="math notranslate nohighlight">\(M^*(\Sigma)\)</span>. Recall that <span class="math notranslate nohighlight">\(M_k^*(\Sigma)_{ij} = 1\)</span> if points <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> are in the same connected component / cluster otherwise <span class="math notranslate nohighlight">\(0\)</span>. Let’s try it out on some randomly generated data:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">BS</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># sample a batch of 3D data</span>
@@ -292,7 +292,7 @@
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -320,7 +320,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 <p>(Non-important note: if denote <span class="math notranslate nohighlight">\(*=0.5\)</span>, then <span class="math notranslate nohighlight">\(C = 2 * M_\Omega - 1\)</span>).</p>
 <p>Once again we can call <code class="docutils literal notranslate"><span class="pre">get_flp_solver</span></code> to obtain a solver, but this time using the <code class="docutils literal notranslate"><span class="pre">constrained=True</span></code> kwarg:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">csolver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">solvers</span><span class="o">.</span><span class="n">get_flp_solver</span><span class="p">(</span><span class="n">constrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_prims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -339,7 +339,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 \[F_{k,\epsilon}^*(\Sigma, M_\Omega) =\mathbb{E}_Z\left[ \text{max}_{A \in \mathcal{C}_k(M_\Omega)} \langle A, \Sigma + \epsilon Z\rangle\, \right].\]</div>
 <p>We can obtain a solver that returns <span class="math notranslate nohighlight">\((A^*_{k,\epsilon} , F^*_{k, \epsilon}, M^*_{k, \epsilon})\)</span> by using the function <code class="docutils literal notranslate"><span class="pre">make_pert_flp_solver</span></code> found in the <code class="docutils literal notranslate"><span class="pre">jaxclust.perturbations</span></code> module, for both constrained and unconstrained solvers:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NUM_SAMPLES</span> <span class="o">=</span> <span class="mi">100</span>
@@ -347,13 +347,11 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 
 <span class="n">pert_solver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">perturbations</span><span class="o">.</span><span class="n">make_pert_flp_solver</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span>
                                                           <span class="n">constrained</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                                          <span class="n">num_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span>
-                                                          <span class="n">sigma</span><span class="o">=</span><span class="n">SIGMA</span><span class="p">)</span>
+                                                          <span class="n">num_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">)</span>
 
 <span class="n">pert_csolver</span> <span class="o">=</span> <span class="n">jaxclust</span><span class="o">.</span><span class="n">perturbations</span><span class="o">.</span><span class="n">make_pert_flp_solver</span><span class="p">(</span><span class="n">csolver</span><span class="p">,</span>
                                                            <span class="n">constrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                                           <span class="n">num_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span>
-                                                           <span class="n">sigma</span><span class="o">=</span><span class="n">SIGMA</span><span class="p">)</span>
+                                                           <span class="n">num_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">)</span>
 <br/><br/></pre></div>
 </div>
 </div>
@@ -368,7 +366,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 <p><span class="math notranslate nohighlight">\(\ell(\Sigma, M_\Omega) = F_{k,\epsilon}^*(\Sigma) - F_{k,\epsilon}^*(\Sigma, M_\Omega)\)</span></p>
 <p>whose gradient will be <span class="math notranslate nohighlight">\(\nabla_\Sigma \ell = A_{k, \epsilon}^*(\Sigma) - A_{k, \epsilon}^*(\Sigma, M_\Omega)\)</span>:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DC</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -390,14 +388,14 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
         <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span> <span class="o">-</span> <span class="n">S</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">S</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">S</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
         <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
         <span class="n">M_target</span> <span class="o">=</span> <span class="n">yhot</span> <span class="o">@</span> <span class="n">yhot</span><span class="o">.</span><span class="n">T</span>
         <span class="n">C</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">M_target</span> <span class="o">-</span> <span class="mi">1</span>
 
-        <span class="n">Ak</span><span class="p">,</span> <span class="n">Fk</span><span class="p">,</span> <span class="n">Mk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pert_solver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-        <span class="n">Akc</span><span class="p">,</span> <span class="n">Fkc</span><span class="p">,</span> <span class="n">Mkc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pert_csolver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">Ak</span><span class="p">,</span> <span class="n">Fk</span><span class="p">,</span> <span class="n">Mk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pert_solver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">Akc</span><span class="p">,</span> <span class="n">Fkc</span><span class="p">,</span> <span class="n">Mkc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pert_csolver</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
         <span class="n">partial_fy_loss</span> <span class="o">=</span> <span class="n">Fk</span> <span class="o">-</span> <span class="n">Fkc</span>
         <span class="k">return</span> <span class="n">partial_fy_loss</span>
@@ -406,7 +404,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 </div>
 <p>In line with <code class="docutils literal notranslate"><span class="pre">flax</span></code>, we will define a train state which encapsulates all parameters (model and optimizer) and methods required for training / evaluation:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DCTrainState</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">PyTreeNode</span><span class="p">):</span>
@@ -445,7 +443,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 </div>
 <p>Let us instantiate our model and optimizer:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">adamw</span><span class="p">(</span><span class="mf">3e-4</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
@@ -458,7 +456,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dummy_x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">BS</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">DSHAPE</span><span class="p">))</span>
@@ -467,7 +465,7 @@ Text(0.5, 1.0, &#39;$M_{10}^*(\\Sigma)$&#39;)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">clu</span> <span class="kn">import</span> <span class="n">parameter_overview</span>
@@ -496,7 +494,7 @@ Total: 887,680
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">DCTrainState</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
@@ -510,14 +508,14 @@ Total: 887,680
 </div>
 <p>We can now make a function that performs a single training step given a batch of data. This is <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code> compatible.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-<span class="k">def</span> <span class="nf">train_step_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">forward_fn</span><span class="p">({</span><span class="s1">&#39;params&#39;</span> <span class="p">:</span> <span class="n">params</span><span class="p">},</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">[</span><span class="s1">&#39;noise&#39;</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">)</span>
-    <span class="n">loss</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">forward</span><span class="p">)(</span><span class="n">state</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">rngs</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train_step_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rngs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rngs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">forward_fn</span><span class="p">({</span><span class="s1">&#39;params&#39;</span> <span class="p">:</span> <span class="n">params</span><span class="p">},</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rngs</span><span class="p">[</span><span class="s1">&#39;noise&#39;</span><span class="p">],</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rngs</span><span class="o">=</span><span class="n">rngs</span><span class="p">)</span>
+    <span class="n">loss</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">forward</span><span class="p">)(</span><span class="n">state</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="n">ncc</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rngs</span><span class="p">)</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="n">grads</span><span class="o">=</span><span class="n">grads</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">grads</span>
 </pre></div>
@@ -525,17 +523,18 @@ Total: 887,680
 </div>
 <p>We can use the above function to perform a training loop in just a few lines of code:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NSTEPS</span> <span class="o">=</span> <span class="mi">300</span>
 <span class="n">rngs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;noise&#39;</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)}</span>
+<span class="n">SIGMA</span> <span class="o">=</span> <span class="mf">0.1</span>
 
 <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NSTEPS</span><span class="p">)):</span>
       <span class="n">rngs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">fold_in</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rngs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
       <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">),</span> <span class="n">train_iterator</span> <span class="o">=</span> <span class="n">next_train</span><span class="p">(</span><span class="n">train_iterator</span><span class="p">)</span>
-      <span class="n">state</span><span class="p">,</span> <span class="n">pl</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">train_step_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">rngs</span><span class="p">)</span>
+      <span class="n">state</span><span class="p">,</span> <span class="n">pl</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">train_step_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Yhot</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">SIGMA</span><span class="p">,</span> <span class="n">rngs</span><span class="p">)</span>
       <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 <br/></pre></div>
 </div>
@@ -545,12 +544,12 @@ Total: 887,680
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-100%|██████████| 300/300 [00:49&lt;00:00,  6.03it/s]
+  0%|          | 0/300 [00:00&lt;?, ?it/s]100%|██████████| 300/300 [00:49&lt;00:00,  6.02it/s]
 </pre></div></div>
 </div>
 <p>Plotting the partial Fenchel-Young loss throughout training with and without smoothing:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -565,7 +564,7 @@ Total: 887,680
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -582,7 +581,7 @@ Text(0, 0.5, &#39;Partial FY Loss&#39;)
 </div>
 <p>Perform a tSNE visualization of the model embeddings for some of the dataset:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NTSNE</span> <span class="o">=</span> <span class="mi">3000</span>
@@ -596,7 +595,7 @@ Text(0, 0.5, &#39;Partial FY Loss&#39;)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="kn">import</span> <span class="n">TSNE</span>
@@ -617,7 +616,7 @@ Text(0, 0.5, &#39;Partial FY Loss&#39;)
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">TSNE_COLORS</span> <span class="o">=</span> <span class="p">[</span>
@@ -635,7 +634,7 @@ Text(0, 0.5, &#39;Partial FY Loss&#39;)
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="output_area docutils container">

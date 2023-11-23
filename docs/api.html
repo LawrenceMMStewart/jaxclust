@@ -103,13 +103,13 @@
 <span id="solvers"></span><h2>Solvers<a class="headerlink" href="#module-jaxclust._src.solvers" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="jaxclust._src.solvers.kruskals">
-<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">kruskals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.kruskals" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">kruskals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.kruskals" title="Link to this definition"></a></dt>
 <dd><p>Calculates the adjacency matrix and cluster connectivity matrix
 of the minimum weight ncc-spanning forest using Kruskal’s algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> (<em>jax.Array</em>) – distance matrix.</p></li>
+<li><p><strong>S</strong> (<em>jax.Array</em>) – similarity matrix.</p></li>
 <li><p><strong>ncc</strong> (<em>int</em>) – number of connected components.</p></li>
 </ul>
 </dd>
@@ -126,7 +126,7 @@ of the minimum weight ncc-spanning forest using Kruskal’s algorithm.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="jaxclust._src.solvers.kruskals_prims_pre">
-<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">kruskals_prims_pre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.kruskals_prims_pre" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">kruskals_prims_pre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.kruskals_prims_pre" title="Link to this definition"></a></dt>
 <dd><p>Calculates the adjacency matrix and cluster connectivity matrix
 of the minimum weight ncc-spanning forest. Uses Prim’s algorithm
 to construct the full spanning tree, then applies Kruskal’s algorithm
@@ -134,7 +134,7 @@ to the edges in the spanning tree in order to calculate the forest.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> (<em>jax.Array</em>) – distance matrix.</p></li>
+<li><p><strong>S</strong> (<em>jax.Array</em>) – similarity matrix.</p></li>
 <li><p><strong>ncc</strong> (<em>int</em>) – number of connected components.</p></li>
 </ul>
 </dd>
@@ -151,14 +151,14 @@ to the edges in the spanning tree in order to calculate the forest.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="jaxclust._src.solvers.ckruskals">
-<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">ckruskals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.ckruskals" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">ckruskals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.ckruskals" title="Link to this definition"></a></dt>
 <dd><p>Calculates the adjacency matrix and cluster connectivity matrix
 of the minimum weight ncc-spanning forest. Uses a biased heuristic
 based on kruskals algorithm to create the forest.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> (<em>jax.Array</em>) – distance matrix.</p></li>
+<li><p><strong>S</strong> (<em>jax.Array</em>) – similarity matrix.</p></li>
 <li><p><strong>ncc</strong> (<em>int</em>) – number of connected components.</p></li>
 <li><p><strong>C</strong> (<em>jax.Array</em>) – constraint matrix.</p></li>
 </ul>
@@ -179,7 +179,7 @@ based on kruskals algorithm to create the forest.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="jaxclust._src.solvers.ckruskals_prims_post">
-<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">ckruskals_prims_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.ckruskals_prims_post" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jaxclust._src.solvers.</span></span><span class="sig-name descname"><span class="pre">ckruskals_prims_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jaxclust._src.solvers.ckruskals_prims_post" title="Link to this definition"></a></dt>
 <dd><p>Calculates the adjacency matrix and cluster connectivity matrix
 of the minimum weight ncc-spanning forest. Uses a biased heuristic
 based on kruskals algorithm to create the forest. Afterwards applies
@@ -189,7 +189,7 @@ at least as good if not better than <cite>ckruskals</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> (<em>jax.Array</em>) – distance matrix.</p></li>
+<li><p><strong>S</strong> (<em>jax.Array</em>) – similarity matrix.</p></li>
 <li><p><strong>ncc</strong> (<em>int</em>) – number of connected components.</p></li>
 <li><p><strong>C</strong> (<em>jax.Array</em>) – constraint matrix.</p></li>
 </ul>
@@ -213,7 +213,7 @@ at least as good if not better than <cite>ckruskals</cite>).</p>
 <span id="perturbations"></span><h2>Perturbations<a class="headerlink" href="#module-jaxclust._src.perturbations" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="jaxclust._src.perturbations.make_pert_flp_solver">
-<span class="sig-prename descclassname"><span class="pre">jaxclust._src.perturbations.</span></span><span class="sig-name descname"><span class="pre">make_pert_flp_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flp_solver:</span> <span class="pre">~typing.Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constrained:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise=&lt;jaxclust._src.perturbations.Normal</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#jaxclust._src.perturbations.make_pert_flp_solver" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">jaxclust._src.perturbations.</span></span><span class="sig-name descname"><span class="pre">make_pert_flp_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flp_solver:</span> <span class="pre">~typing.Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constrained:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise=&lt;jaxclust._src.perturbations.Normal</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control_variate:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#jaxclust._src.perturbations.make_pert_flp_solver" title="Link to this definition"></a></dt>
 <dd><p>Creates a perturbed solver of the maximum weight k-connected-component
 forest lp (flp).</p>
 <dl class="field-list simple">
@@ -222,13 +222,18 @@ forest lp (flp).</p>
 <li><p><strong>flp_solver</strong> (<em>Callable</em>) – an flp solver from <cite>jaxclust.solvers</cite>.</p></li>
 <li><p><strong>constrained</strong> (<em>bool</em>) – indicates if <cite>flp_solver</cite> takes constraints.</p></li>
 <li><p><strong>num_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – number of samples for MC estimator. Defaults to 1000.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – magnitude of noise. Defaults to 0.1.</p></li>
-<li><p><strong>noise</strong> (<em>_type_</em><em>, </em><em>optional</em>) – noise distribution. Defaults to Normal().</p></li>
+<li><p><strong>noise</strong> (<em>Class</em><em>, </em><em>optional</em>) – noise distribution. Defaults to Normal().</p></li>
+<li><p><strong>control_variate</strong> (<em>bool</em>) – use a control variate for jacobians of adjacency and connectivity matrix.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>an flp solver taking the same args and kwargs as <cite>flp_solver</cite>
-as well as an rng (jax.random.PRNGKey).</p>
+<dd class="field-even"><p><p>an flp solver taking the same args as <cite>flp_solver</cite>
+as well the additional arguments (following those of <cite>flp_solver</cite>):</p>
+<blockquote>
+<div><p>sigma (float): magnitude of noise.
+rng (jax.random.PRNGKey).</p>
+</div></blockquote>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
